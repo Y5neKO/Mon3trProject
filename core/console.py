@@ -53,24 +53,24 @@ def main():
     parse.add_argument("-g", "--generate_webshell", action="store", type=str,
                        help="生成webshell的文件名")
     parse.add_argument("-w", "--webshell", action="store", type=str, help="webshell路径")
-    parse.add_argument("-c", "--cmd", action="store", type=str, help="执行命令")
+    parse.add_argument("--get", action="store", type=str, help="GET参数")
+    parse.add_argument("--cookie", action="store", type=str, help="Cookie值(格式: User=123;Pass=456)")
     parse.add_argument("-x", "--xor", action="store", type=str, help="xor加密key")
+    parse.add_argument("-c", "--cmd", action="store", type=str, help="执行命令")
 
     # 接收命令行参数解析后的参数
     args = parse.parse_args()
 
-    print("------------------------------开始任务------------------------------")
-
     if args.generate_webshell is not None:
+        print("------------------------------开始任务------------------------------")
         webshell_dir = args.generate_webshell
         webshell_data = gen_php_webshell()
         with open(webshell_dir, 'w') as f:
             f.write(webshell_data[0])
         print("生成成功, 路径为: " + os.path.abspath(webshell_dir))
         print(webshell_data[1])
+        print("------------------------------任务结束------------------------------")
 
     if args.webshell is not None:
-        if args.cmd is not None:
-            webshell_path = args.webshell
-
-    print("------------------------------任务结束------------------------------")
+        if args.get & args.cookie & args.cmd:
+            print(args.get + args.cookie + args.cmd)
