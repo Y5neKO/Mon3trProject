@@ -3,6 +3,7 @@ import sys
 
 from core.banner import banner
 from core.console import *
+from core.log import *
 
 
 def signal_handler(signal, frame):
@@ -17,4 +18,8 @@ def run():
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
-    run()
+    try:
+        run()
+    except Exception as e:
+        log_error(e)
+        print("发生错误，请检查日志")

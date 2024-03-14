@@ -5,6 +5,7 @@
 @IDE: PyCharm 
 """
 import base64
+import json
 import random
 import string
 
@@ -117,5 +118,12 @@ def gen_php_webshell():
     webshell = webshell.replace('\n', '')
     webshell = webshell.replace('    ', '')
     setting = "GET参数: " + variables[5] + "[]=2" + "&" + variables[6] + "[]=1\n" + "Cookie:  " + cookie_name + "=" + cookie_value + "\n密码:    " + f'{p1}[]=2&{p2}[]=1&{passwords}'
+    config = {
+        "GET": "" + variables[5] + "[]=2" + "&" + variables[6] + "[]=1",
+        "Cookie": cookie_name + "=" + cookie_value,
+        "Passwords": f'{p1}[]=2&{p2}[]=1&{passwords}'
+    }
+    with open("./latest_gennerated.json", "w") as json_file:
+        json.dump(config, json_file, indent=4)
     result = [webshell, setting]
     return result
